@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 {% block content %}
   <div class="container p-5">
     {% if redirect %}
@@ -67,7 +68,7 @@
               <td>{{ tarea.fecha_vencimiento }}</td>
               <td>{{ tarea.get_estado_display }}</td>
               <td>{{ tarea.get_etiqueta_display }}</td>
-              <td>{{ tarea.get_urgencia_display }}</td>
+              <td class="{{ tarea.get_urgencia_display|get_urgencia_color }}">{{ tarea.get_urgencia_display }}</td>
               <td>{{ tarea.responsable }}</td>
               <td>{{ tarea.creado_por }}</td>
               <td>

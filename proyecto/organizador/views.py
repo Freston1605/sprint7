@@ -7,8 +7,19 @@ from django.contrib.auth.views import LoginView
 from django.views.generic.edit import CreateView
 from .forms import RegistrationForm, CustomLoginForm, TareaForm
 from .models import Tarea
+from django.contrib import admin
 # Create your views here.
 
+#clase para visualizacion en panel Admin de Django
+class TareaAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'descripcion', 'fecha_vencimiento', 'estado', 'etiqueta', 'urgencia', 'responsable', 'creado_por')
+    list_filter = ('estado', 'etiqueta', 'urgencia', 'responsable', 'creado_por')
+    search_fields = ('titulo', 'descripcion', 'responsable__username', 'creado_por__username')
+    ordering = ('-fecha_vencimiento',)
+
+
+
+#muestra de landing
 def landing_page(request):
     return render(request, 'landing_page.html')
 
