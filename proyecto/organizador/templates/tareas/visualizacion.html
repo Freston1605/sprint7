@@ -3,7 +3,7 @@
 {% block content %}
   <div class="container p-5">
     {% if redirect %}
-    <h3>Enhorabuena, {{ request.user.username }}</h3>
+    <h3>Excelente, {{ request.user.username }}</h3>
     <p>¡Has creado una nueva tarea!</p>
     {% endif %}
     <h2>Tareas Completadas</h2>
@@ -57,7 +57,8 @@
             <th scope="col">Urgencia</th>
             <th scope="col">Asignado a</th>
             <th scope="col">Creado por</th>
-            <th scope="col">Acciones</th>
+            <th scope="col">Cambio Estado</th>
+            <th scope="col">Cambio Prioridad</th>
           </tr>
         </thead>
         <tbody>
@@ -75,6 +76,16 @@
                 <form method="post" action="{% url 'completar_tarea' tarea.id %}">
                   {% csrf_token %}
                   <button type="submit">Completar Tarea</button>
+                </form>
+              </td>
+              <td>
+                <form method="post" action="{% url 'cambiar_prioridad' tarea.id %}">
+                  {% csrf_token %}
+                  <select name="urgencia" onchange="this.form.submit()">
+                    {% for choice in tarea.URGENCIA_CHOICES %}
+                      <option value="{{ choice.0 }}" {% if choice.0 == tarea.urgencia %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                  </select>
                 </form>
               </td>
             </tr>

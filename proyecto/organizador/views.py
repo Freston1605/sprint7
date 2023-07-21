@@ -139,19 +139,19 @@ def completar_tarea(request, tarea_id):
         tarea.save()
         messages.success(request, 'La tarea ha sido completada exitosamente.')
         return redirect('lista_tareas')  
-
+    # Redireccion a pagina lista
     return render(request, 'tareas/visualizacion.html', {'tarea': tarea}) 
 
-
-def modificar_prioridad(request, tarea_id):
+#funcion para cambio de prioridad
+def cambiar_prioridad(request, tarea_id):
     tarea = get_object_or_404(Tarea, id=tarea_id)
 
-    if request.method == 'POST':
-        nueva_urgencia = request.POST.get('urgencia')
+    if request.method == "POST":
+        urgencia = request.POST.get("urgencia")
+        tarea.urgencia = urgencia
+        tarea.save()
 
-        if nueva_urgencia in dict(Tarea.URGENCIA_CHOICES).keys():
-            tarea.urgencia = nueva_urgencia
-            tarea.save()
-            return redirect('lista_tareas') 
-
-    return render(request, 'tareas/visualizacion.html', {'tarea': tarea})
+        # Redireccion a pagina lista
+        return redirect("lista_tareas")
+    
+    return render(request, 'tareas/visualizacion.html', {'tarea': tarea}) 

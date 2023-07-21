@@ -11,5 +11,5 @@ urlpatterns = [
     path('crear_tarea/', views.CrearTareaView.as_view(), name="crear_tarea"),
     path('lista_tareas/', views.lista_tareas, name='lista_tareas'),
     path('tarea/<int:tarea_id>/completar/', views.completar_tarea, name='completar_tarea'),
-    path('tarea/<int:tarea_id>/modificar_prioridad/', views.modificar_prioridad, name='modificar_prioridad'),
+    path('tarea/<int:tarea_id>/cambiar_prioridad/', views.cambiar_prioridad, name='cambiar_prioridad'),
 ]
