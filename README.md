@@ -25,5 +25,3 @@
 11. **Columna de prioridad en la vista de listado:** Agrega la columna de prioridad a la tabla de despliegue en la vista de listado de tareas.
 
 12. **Estadísticas de tareas:** Implementa la funcionalidad para que los usuarios puedan ver cuántas tareas tienen pendientes, cuántas han completado, cuántas están en progreso y cuántas han vencido. Puedes agregar esto en la página principal o en una página separada, según tu preferencia de diseño.
-
-Espero que esta lista actualizada te sea de ayuda para desarrollar la aplicación web con todas las funcionalidades requeridas, incluido el sistema de autenticación y sesiones que es esencial para la seguridad y funcionamiento de la aplicación. ¡Mucho éxito en tu desarrollo!

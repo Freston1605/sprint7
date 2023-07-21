@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -85,7 +85,6 @@ class CrearTareaView(CreateView):
     model = Tarea
     template_name = 'tareas/crear.html'
     form_class = TareaForm
-    success_url = reverse_lazy('lista_tareas')  # Redirige a la lista de tareas después de crear una nueva tarea
 
     def form_valid(self, form):
         """ 
@@ -107,5 +106,14 @@ class CrearTareaView(CreateView):
                 messages.error(self.request, f"{field.label} - {error}")
         return super().form_invalid(form)
     
+    def get_success_url(self):
+        """
+        Método para obtener la URL de redirección después de que el formulario es válido.
+        """
+        messages.success(self.request, "¡Tarea creada exitosamente!")  # Agregar mensaje de éxito
+        return reverse('lista_tareas')  # Utilizar la función reverse en lugar de reverse_lazy
+
+    
 def lista_tareas(request):
-    return render(request, 'tareas/visualizacion.html')
+    tareas = Tarea.objects.all()
+    return render(request, 'tareas/visualizacion.html', {'tareas': tareas})
