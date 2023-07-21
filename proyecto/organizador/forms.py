@@ -48,7 +48,7 @@ class TareaForm(forms.ModelForm):
     de automatizar la implementación el formulario con bootstrap.
     """
 
-    ESTADOS = (
+    estados_choices = (
         ("pendiente", "Pendiente"),
         ("en_progreso", "En Progreso"),
         ("completada", "Completada"),
@@ -59,15 +59,27 @@ class TareaForm(forms.ModelForm):
         ("hogar", "Hogar"),
         ("estudio", "Estudio"),
     )
+
+    urgencia_choices = (
+        ("baja", "Baja"),
+        ("media", "Media"),
+        ("alta", "Alta"),
+    )
+
     # Asignando a cada campo la las selecciones, la etiqueta y la clase para que pueda ser mostrado por bootstrap
     estado = forms.ChoiceField(
-        choices=ESTADOS,
+        choices=estados_choices,
         label="Estado",
         widget=forms.Select(attrs={"class": "form-select"}),
     )
     etiqueta = forms.ChoiceField(
         choices=etiquetas_choices,
         label="Etiqueta",
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+    responsable = forms.ChoiceField(
+        choices=urgencia_choices,
+        label="Urgencia",
         widget=forms.Select(attrs={"class": "form-select"}),
     )
     responsable = forms.ModelChoiceField(
@@ -87,4 +99,5 @@ class TareaForm(forms.ModelForm):
             "fecha_vencimiento",
             "estado",
             "etiqueta",
+            "urgencia",
         ]

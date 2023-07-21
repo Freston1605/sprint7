@@ -17,6 +17,7 @@
             <th scope="col">Fecha de Vencimiento</th>
             <th scope="col">Estado</th>
             <th scope="col">Etiqueta</th>
+            <th scope="col">Urgencia</th>
             <th scope="col">Asignado a</th>
             <th scope="col">Creado por</th>
           </tr>
@@ -29,6 +30,7 @@
               <td>{{ tarea.fecha_vencimiento }}</td>
               <td>{{ tarea.get_estado_display }}</td>
               <td>{{ tarea.get_etiqueta_display }}</td>
+              <td>{{ tarea.get_urgencia_display }}</td>
               <td>{{ tarea.responsable }}</td>
               <td>{{ tarea.creado_por }}</td>
             </tr>

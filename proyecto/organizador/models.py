@@ -7,12 +7,13 @@ from django.contrib.auth.models import User
 class Tarea(models.Model):
     """
     Clase para el modelo de Tareas.
-    Tiene como atributos: quien creó la tarea 'creado_por' 
+    Tiene como atributos: quien creó la tarea 'creado_por'
     (asignado automáticamente al usuario que hizo inicio de sesión),
-    responsable (a quién va dirigida la tarea), estado (de la tarea), 
+    responsable (a quién va dirigida la tarea), estado (de la tarea),
     etiqueta (de la tarea), fecha de vencimiento y una descripción.
     """
 
+    # Elecciones para estado, etiqueta y urgencia
     ESTADOS_CHOICES = (
         ("pendiente", "Pendiente"),
         ("en_progreso", "En Progreso"),
@@ -24,15 +25,37 @@ class Tarea(models.Model):
         ("hogar", "Hogar"),
         ("estudio", "Estudio"),
     )
-    estado = models.CharField(
-        max_length=20, choices=ESTADOS_CHOICES, default="pendiente"
+
+    URGENCIA_CHOICES = (
+        ("alta", "Alta"),
+        ("media", "Media"),
+        ("baja", "Baja"),
     )
-    etiqueta = models.CharField(max_length=20, choices=ETIQUETAS_CHOICES)
+
+    # Atributos
     titulo = models.CharField(max_length=100)
     descripcion = models.TextField()
     fecha_vencimiento = models.DateField()
+    # Atributos con elección de una lista
+    estado = models.CharField(
+        max_length=20, 
+        choices=ESTADOS_CHOICES, 
+        default="pendiente"
+    )
+    etiqueta = models.CharField(
+        max_length=20, 
+        choices=ETIQUETAS_CHOICES, 
+        default='trabajo'
+    )
+    urgencia = models.CharField(
+        max_length=10, 
+        choices=URGENCIA_CHOICES, 
+        default="baja"
+    )
+    # Este campo es automáticamente asignado en la vista al usuario autenticado
     creado_por = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="tareas_creadas"
+        User, on_delete=models.CASCADE, 
+        related_name="tareas_creadas"
     )
     responsable = models.ForeignKey(
         User,
