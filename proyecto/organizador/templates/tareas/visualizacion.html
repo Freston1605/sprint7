@@ -1,10 +1,40 @@
 {% extends "base.html" %}
-
 {% block content %}
   <div class="container p-5">
-    <h1>Enhorabuena, {{ request.user.username }} </h1>
+    {% if redirect %}
+    <h3>Enhorabuena, {{ request.user.username }}</h3>
     <p>¡Has creado una nueva tarea!</p>
-    <p> Prontamente podrás ver las tareas creadas acá </p>
-    <!-- Agrega más contenido según tus necesidades -->
+    {% endif %}
+    <h2>Lista de todas las tareas</h2>
   </div>
+  <div class="container pb-5">
+    <div class="table-responsive-xxl">
+      <table class="table table-secondary">
+        <thead>
+          <tr>
+            <th scope="col">Título</th>
+            <th scope="col">Descripción</th>
+            <th scope="col">Fecha de Vencimiento</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Etiqueta</th>
+            <th scope="col">Asignado a</th>
+            <th scope="col">Creado por</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tarea in tareas %}
+            <tr>
+              <td scope="row">{{ tarea.titulo }}</td>
+              <td>{{ tarea.descripcion }}</td>
+              <td>{{ tarea.fecha_vencimiento }}</td>
+              <td>{{ tarea.get_estado_display }}</td>
+              <td>{{ tarea.get_etiqueta_display }}</td>
+              <td>{{ tarea.responsable }}</td>
+              <td>{{ tarea.creado_por }}</td>
+            </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock content %}
