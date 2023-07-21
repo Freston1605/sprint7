@@ -13,17 +13,14 @@
               crossorigin="anonymous">
         <!-- Estilos personalizados -->
         <link rel="stylesheet" href="{% static '/css/styles.css' %}">
-        <title>Organizador de Tareas</title>
+        <title>Registro de usuarios</title>
     </head>
     <body>
         <!-- Barra de navegación -->
         <nav class="navbar navbar-expand-lg sticky-top bg-body-secondary">
             <div class="container-fluid mx-2">
                 <a class="navbar-brand" href="{% url 'landing' %}">
-                    <img src="{% static 'img/calendar-check.svg' %}"
-                         alt="Logo"
-                         height="48"
-                         width="48">
+                    <img src="{% static 'img/calendar-check.svg' %}" alt="Logo" height="48" width="48">
                     Organizador de Tareas
                 </a>
                 <button class="navbar-toggler"
@@ -43,12 +40,8 @@
                                 <a class="nav-link" href="{% url 'welcome' %}">Bienvenida</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'crear_tarea' %}">Crear una nueva tarea</a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
                             </li>
-                            
                         {% else %}
                             <!-- Mostrar enlaces para usuarios no autenticados -->
                             <li class="nav-item">
@@ -62,16 +55,6 @@
                 </div>
             </div>
         </nav>
-        <!-- Mensajes -->
-        {% if messages %}
-            <div class="container">
-                <div class="alert alert-danger">
-                    <ul class="list-group">
-                        {% for message in messages %}<li class="list-group-item">{{ message }}</li>{% endfor %}
-                    </ul>
-                </div>
-            </div>
-        {% endif %}
         <!-- Contenido principal -->
         <main class="container-fluid">
             {% block content %}
@@ -81,7 +64,7 @@
         <footer>
             <div class="py-5 bg-dark text-white text-center">
                 <div class="container py-3">
-                    <p>© 2023 Grupo 2</p>
+                    <p>© 2023 Grupo 2 </p>
                     <p>Todos los derechos reservados.</p>
                 </div>
             </div>

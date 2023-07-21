@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}
+    Crear una nueva tarea
+{% endblock title %}
+{% block content %}
+    <!-- Formulario para crear una nueva tarea -->
+    <div class="container">
+        <div class="py-5">
+            <h2>Crear una nueva tarea</h2>
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label_tag }}</label>
+                    {% if field.name == 'estado' or field.name == 'etiqueta' %}
+                        <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-select"
+                                aria-describedby="helpId">
+                            {% for value, display_text in field.field.choices %}
+                            <option value="{{ value }}">{{ display_text }}</option>
+                            {% endfor %}
+                        </select>
+                    {% elif field.name == 'responsable' %}
+                        <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-select"
+                                aria-describedby="helpId">
+                            {% for user in field.field.queryset %}
+                            <option value="{{ user.pk }}">{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <input type="{{ field.field.widget.input_type }}"
+                               name="{{ field.name }}"
+                               id="{{ field.id_for_label }}"
+                               class="form-control"
+                               placeholder=""
+                               aria-describedby="helpId">
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Crear Tarea</button>
+            </form>
+        </div>
+    </div>   
+{% endblock content %}
