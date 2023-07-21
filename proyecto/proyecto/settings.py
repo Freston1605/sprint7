@@ -80,10 +80,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'sprint7',
-        'USER': 'postgres',
-        'PASSWORD': 'perla_2112',
-        'HOST': 'localhost',  # o la dirección IP del servidor PostgreSQL
-        'PORT': '',          # deja vacío para usar el puerto predeterminado (5432)
+        'USER': 'grupo27',
+        'PASSWORD': 'grupo27',
+        'HOST': 'revolt.cl',
+        'PORT': '',
     }
 }
 

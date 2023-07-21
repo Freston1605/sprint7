@@ -1,5 +1,5 @@
 from django.urls import reverse_lazy, reverse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -113,7 +113,20 @@ class CrearTareaView(CreateView):
         messages.success(self.request, "¡Tarea creada exitosamente!")  # Agregar mensaje de éxito
         return reverse('lista_tareas')  # Utilizar la función reverse en lugar de reverse_lazy
 
-    
+#modificacion de lsta de tareas para que muestre las completas y las pendientes separado
 def lista_tareas(request):
-    tareas = Tarea.objects.all()
-    return render(request, 'tareas/visualizacion.html', {'tareas': tareas})
+    tareas_completadas = Tarea.objects.filter(estado='completada')
+    tareas_pendientes = Tarea.objects.exclude(estado='completada')
+    return render(request, 'tareas/visualizacion.html', {'tareas_completadas': tareas_completadas, 'tareas_pendientes': tareas_pendientes})
+
+#funcion para completar las tareas
+def completar_tarea(request, tarea_id):
+    tarea = get_object_or_404(Tarea, id=tarea_id)
+
+    if request.method == 'POST':
+        tarea.estado = 'completada'
+        tarea.save()
+        messages.success(request, 'La tarea ha sido completada exitosamente.')
+        return redirect('lista_tareas')  # Cambia 'nombre_de_la_vista_donde_se_muestra_la_lista_de_tareas' por el nombre real de la vista donde se muestra la lista de tareas.
+
+    return render(request, 'nombre_de_la_plantilla_de_detalle_de_tarea.html', {'tarea': tarea}) 
