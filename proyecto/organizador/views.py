@@ -1,6 +1,6 @@
 from django.urls import reverse
 from django.http import HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -9,9 +9,20 @@ from django.views.generic.edit import CreateView
 from .forms import RegistrationForm, CustomLoginForm, TareaForm
 from .models import Tarea
 
+from django.contrib import admin
 # Create your views here.
 
 
+#clase para visualizacion en panel Admin de Django
+class TareaAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'descripcion', 'fecha_vencimiento', 'estado', 'etiqueta', 'urgencia', 'responsable', 'creado_por')
+    list_filter = ('estado', 'etiqueta', 'urgencia', 'responsable', 'creado_por')
+    search_fields = ('titulo', 'descripcion', 'responsable__username', 'creado_por__username')
+    ordering = ('-fecha_vencimiento',)
+
+
+
+#muestra de landing
 def landing_page(request):
     return render(request, "landing_page.html")
 
@@ -128,42 +139,35 @@ class CrearTareaView(CreateView):
             "lista_tareas"
         )  # Utilizar la función reverse en lugar de reverse_lazy
 
+#modificacion de lsta de tareas para que muestre las completas y las pendientes separado
 
 def lista_tareas(request):
-    tareas = Tarea.objects.all()
-    return render(request, "tareas/visualizacion.html", {"tareas": tareas})
+    tareas_completadas = Tarea.objects.filter(estado='completada')
+    tareas_pendientes = Tarea.objects.exclude(estado='completada')
+    return render(request, 'tareas/visualizacion.html', {'tareas_completadas': tareas_completadas, 'tareas_pendientes': tareas_pendientes})
 
-
-def detalles_tarea(request, tarea_id):
+#funcion para completar las tareas
+def completar_tarea(request, tarea_id):
     tarea = get_object_or_404(Tarea, id=tarea_id)
 
-    # Mostrando los detalles
-    detalles_html = f"""
-        <div class="table-responsive">
-            <table class="table table-primary">
-                <thead>
-                <tr>
-                    <th scope="col">Título</th>
-                    <th scope="col">Descripción</th>
-                    <th scope="col">Fecha de Vencimiento</th>
-                    <th scope="col">Estado</th>
-                    <th scope="col">Urgencia</th>
-                    <th scope="col">Asignado a</th>
-                    <th scope="col">Creado por</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="">
-                        <td scope="row">{tarea.titulo}</td>
-                        <td>{tarea.descripcion}</td>
-                        <td>{tarea.fecha_vencimiento}</td>
-                        <td>{tarea.estado}</td>
-                        <td>{tarea.urgencia}</td>
-                        <td>{tarea.responsable}</td>
-                        <td>{tarea.creado_por}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    """
-    return HttpResponse(detalles_html)
+    if request.method == 'POST':
+        tarea.estado = 'completada'
+        tarea.save()
+        messages.success(request, 'La tarea ha sido completada exitosamente.')
+        return redirect('lista_tareas')  
+    # Redireccion a pagina lista
+    return render(request, 'tareas/visualizacion.html', {'tarea': tarea}) 
+
+#funcion para cambio de prioridad
+def cambiar_prioridad(request, tarea_id):
+    tarea = get_object_or_404(Tarea, id=tarea_id)
+
+    if request.method == "POST":
+        urgencia = request.POST.get("urgencia")
+        tarea.urgencia = urgencia
+        tarea.save()
+
+        # Redireccion a pagina lista
+        return redirect("lista_tareas")
+    
+    return render(request, 'tareas/visualizacion.html', {'tarea': tarea}) 

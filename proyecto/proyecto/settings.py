@@ -80,10 +80,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'sprint7',
-        'USER': 'postgres',
-        'PASSWORD': 'perla_2112',
-        'HOST': 'localhost',  # o la dirección IP del servidor PostgreSQL
-        'PORT': '',          # deja vacío para usar el puerto predeterminado (5432)
+        'USER': 'grupo27',
+        'PASSWORD': 'grupo27',
+        'HOST': 'revolt.cl',
+        'PORT': '',
     }
 }
 
@@ -122,7 +122,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 

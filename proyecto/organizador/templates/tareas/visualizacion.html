@@ -1,9 +1,12 @@
 {% extends "base.html" %}
-{% load static %}
-<!-- Agrega esta línea para cargar la etiqueta static -->
+{% load custom_filters %}
 {% block content %}
   <div class="container p-5">
-    <h2>Lista de todas las tareas</h2>
+    {% if redirect %}
+    <h3>Excelente, {{ request.user.username }}</h3>
+    <p>¡Has creado una nueva tarea!</p>
+    {% endif %}
+    <h2>Tareas Completadas</h2>
   </div>
   <div class="container pb-5">
     <div class="table-responsive-xxl">
@@ -19,7 +22,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for tarea in tareas %}
+          {% for tarea in tareas_completadas %}
             <tr>
               <td scope="row">{{ tarea.titulo }}</td>
               <td>{{ tarea.fecha_vencimiento }}</td>
@@ -36,11 +39,58 @@
       </table>
     </div>
   </div>
-  <div class="container pb-5" id="detallesTarea" style="display: none;">
-    <h2>Detalles de la tarea</h2>
-    <div id="detallesContenido">
-      <!-- Los detalles de la tarea se mostrarán aquí -->
+
+  <div class="container p-5">
+    <h2>Tareas Pendientes</h2>
+  </div>
+  <div class="container pb-5">
+    <div class="table-responsive-xxl">
+      <table class="table table-secondary">
+        <thead>
+          <tr>
+            <th scope="col">Título</th>
+            <th scope="col">Descripción</th>
+            <th scope="col">Fecha de Vencimiento</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Etiqueta</th>
+            <th scope="col">Urgencia</th>
+            <th scope="col">Asignado a</th>
+            <th scope="col">Creado por</th>
+            <th scope="col">Cambio Estado</th>
+            <th scope="col">Cambio Prioridad</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tarea in tareas_pendientes %}
+            <tr>
+              <td scope="row">{{ tarea.titulo }}</td>
+              <td>{{ tarea.descripcion }}</td>
+              <td>{{ tarea.fecha_vencimiento }}</td>
+              <td>{{ tarea.get_estado_display }}</td>
+              <td>{{ tarea.get_etiqueta_display }}</td>
+              <td class="{{ tarea.get_urgencia_display|get_urgencia_color }}">{{ tarea.get_urgencia_display }}</td>
+              <td>{{ tarea.responsable }}</td>
+              <td>{{ tarea.creado_por }}</td>
+              <td>
+                <form method="post" action="{% url 'completar_tarea' tarea.id %}">
+                  {% csrf_token %}
+                  <button type="submit">Completar Tarea</button>
+                </form>
+              </td>
+              <td>
+                <form method="post" action="{% url 'cambiar_prioridad' tarea.id %}">
+                  {% csrf_token %}
+                  <select name="urgencia" onchange="this.form.submit()">
+                    {% for choice in tarea.URGENCIA_CHOICES %}
+                      <option value="{{ choice.0 }}" {% if choice.0 == tarea.urgencia %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                  </select>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
-  <script src="{% static 'js/ver_detalles.js' %}"></script> <!-- Asegúrate de que la ruta sea correcta -->
 {% endblock content %}
