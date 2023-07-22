@@ -1,10 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
+<!-- Agrega esta línea para cargar la etiqueta static -->
 {% block content %}
   <div class="container p-5">
-    {% if redirect %}
-    <h3>Enhorabuena, {{ request.user.username }}</h3>
-    <p>¡Has creado una nueva tarea!</p>
-    {% endif %}
     <h2>Lista de todas las tareas</h2>
   </div>
   <div class="container pb-5">
@@ -13,30 +11,36 @@
         <thead>
           <tr>
             <th scope="col">Título</th>
-            <th scope="col">Descripción</th>
             <th scope="col">Fecha de Vencimiento</th>
             <th scope="col">Estado</th>
-            <th scope="col">Etiqueta</th>
             <th scope="col">Urgencia</th>
             <th scope="col">Asignado a</th>
-            <th scope="col">Creado por</th>
+            <th scope="col">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {% for tarea in tareas %}
             <tr>
               <td scope="row">{{ tarea.titulo }}</td>
-              <td>{{ tarea.descripcion }}</td>
               <td>{{ tarea.fecha_vencimiento }}</td>
               <td>{{ tarea.get_estado_display }}</td>
-              <td>{{ tarea.get_etiqueta_display }}</td>
               <td>{{ tarea.get_urgencia_display }}</td>
               <td>{{ tarea.responsable }}</td>
-              <td>{{ tarea.creado_por }}</td>
+              <!-- Botón para ver detalles -->
+              <td>
+                <button class="btn btn-primary" onclick="verDetalles({{ tarea.id }})">Ver detalles</button>
+              </td>
             </tr>
           {% endfor %}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
+  <div class="container pb-5" id="detallesTarea" style="display: none;">
+    <h2>Detalles de la tarea</h2>
+    <div id="detallesContenido">
+      <!-- Los detalles de la tarea se mostrarán aquí -->
+    </div>
+  </div>
+  <script src="{% static 'js/ver_detalles.js' %}"></script> <!-- Asegúrate de que la ruta sea correcta -->
 {% endblock content %}

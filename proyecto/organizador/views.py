@@ -1,5 +1,6 @@
-from django.urls import reverse_lazy, reverse
-from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -7,10 +8,13 @@ from django.contrib.auth.views import LoginView
 from django.views.generic.edit import CreateView
 from .forms import RegistrationForm, CustomLoginForm, TareaForm
 from .models import Tarea
+
 # Create your views here.
 
+
 def landing_page(request):
-    return render(request, 'landing_page.html')
+    return render(request, "landing_page.html")
+
 
 # Registro de usuarios
 def register(request):
@@ -19,29 +23,32 @@ def register(request):
     La validación está hecha por los métodos de la clase RegistrationForm que hereda
     de AuthenticationForm
     """
-    if request.method == 'POST':
+    if request.method == "POST":
         form = RegistrationForm(request.POST)
         if form.is_valid():
             # Guardar el nuevo usuario en la base de datos
             form.save()
             # Iniciar sesión automáticamente con el nuevo usuario
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password1"]
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
                 # Redirigir al usuario a una página después del registro exitoso
-                return redirect('welcome')
+                return redirect("welcome")
     else:
         form = RegistrationForm()
 
-    return render(request, 'registration/register.html', {'form': form})
+    return render(request, "registration/register.html", {"form": form})
+
 
 """ class RegistroUsuarioView(CreateView):
     form_class = RegistrationForm
     template_name = 'registration/register.html'
     success_url = reverse_lazy('login')
  """
+
+
 # Inicio de sesión
 class CustomLoginView(LoginView):
     """
@@ -49,23 +56,27 @@ class CustomLoginView(LoginView):
     Redireige a welcome.html, tiene a login.html como plantilla y usa un el formulario
     CustomLoginForm.
     """
+
     authentication_form = CustomLoginForm
     next_page = "welcome"
     redirect_authenticated_user = True
-
 
     def form_invalid(self, form):
         """
         Método para manejar el caso de inicio de sesión inválido.
         Aquí puedes personalizar la forma en que se muestran los errores al usuario.
         """
-        messages.error(self.request, "Inicio de sesión inválido. Verifica tus credenciales.")
+        messages.error(
+            self.request, "Inicio de sesión inválido. Verifica tus credenciales."
+        )
         return super().form_invalid(form)
-    
+
+
 # Bienvenida después del inicio de sesión
 @login_required
 def welcome(request):
     return render(request, "welcome.html")
+
 
 # Cierre de sesión
 def logout_view(request):
@@ -83,37 +94,76 @@ class CrearTareaView(CreateView):
     """
 
     model = Tarea
-    template_name = 'tareas/crear.html'
+    template_name = "tareas/crear.html"
     form_class = TareaForm
 
     def form_valid(self, form):
-        """ 
+        """
         Método heredado que permite la validación de los datos del formulario
         La funcionalidad añadida es que automáticamente asigna
         al campo 'creado_por' al usuario que inició sesión.
         """
         form.instance.creado_por = self.request.user
         return super().form_valid(form)
-    
+
     def form_invalid(self, form):
         """
         Método heredado para manejar el caso de formulario inválido.
-        La funcionalidad añadida es que se muestren en la página a 
+        La funcionalidad añadida es que se muestren en la página a
         través de clases de django todos los errores captados por django.
         """
         for field in form:
             for error in field.errors:
                 messages.error(self.request, f"{field.label} - {error}")
         return super().form_invalid(form)
-    
+
     def get_success_url(self):
         """
         Método para obtener la URL de redirección después de que el formulario es válido.
         """
-        messages.success(self.request, "¡Tarea creada exitosamente!")  # Agregar mensaje de éxito
-        return reverse('lista_tareas')  # Utilizar la función reverse en lugar de reverse_lazy
+        messages.success(
+            self.request, "¡Tarea creada exitosamente!"
+        )  # Agregar mensaje de éxito
+        return reverse(
+            "lista_tareas"
+        )  # Utilizar la función reverse en lugar de reverse_lazy
 
-    
+
 def lista_tareas(request):
     tareas = Tarea.objects.all()
-    return render(request, 'tareas/visualizacion.html', {'tareas': tareas})
+    return render(request, "tareas/visualizacion.html", {"tareas": tareas})
+
+
+def detalles_tarea(request, tarea_id):
+    tarea = get_object_or_404(Tarea, id=tarea_id)
+
+    # Mostrando los detalles
+    detalles_html = f"""
+        <div class="table-responsive">
+            <table class="table table-primary">
+                <thead>
+                <tr>
+                    <th scope="col">Título</th>
+                    <th scope="col">Descripción</th>
+                    <th scope="col">Fecha de Vencimiento</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Urgencia</th>
+                    <th scope="col">Asignado a</th>
+                    <th scope="col">Creado por</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="">
+                        <td scope="row">{tarea.titulo}</td>
+                        <td>{tarea.descripcion}</td>
+                        <td>{tarea.fecha_vencimiento}</td>
+                        <td>{tarea.estado}</td>
+                        <td>{tarea.urgencia}</td>
+                        <td>{tarea.responsable}</td>
+                        <td>{tarea.creado_por}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    """
+    return HttpResponse(detalles_html)
