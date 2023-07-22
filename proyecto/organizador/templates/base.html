@@ -52,9 +52,11 @@
                                    aria-haspopup="true"
                                    aria-expanded="false">Tareas</a>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="{% url 'crear_tarea' %}">Crear una nueva tarea</a>
-                                    <a class="dropdown-item" href="{% url 'lista_tareas' %}">Ver todas las tareas</a>
+                                    <a class="dropdown-item" href="{% url 'tareas_pendientes' %}"> Ver las tareas pendientes</a>
+                                    <a class="dropdown-item" href="{% url 'tareas_completadas' %}">Ver las tareas completadas</a>
                                     <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{% url 'crear_tarea' %}">Crear una nueva tarea</a>
+
                                 </div>
                             </li>
                             <li class="nav-item">
@@ -106,5 +108,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
                 crossorigin="anonymous"></script>
+        <!-- Guión de javascript -->
+        <script src="{% static 'js/ver_detalles.js' %}"></script>
     </body>
 </html>

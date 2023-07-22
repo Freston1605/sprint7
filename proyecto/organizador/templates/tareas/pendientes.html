@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% block content %}
+  <!-- Tareas pendientes -->
+  <div class="container">
+    <div class="card my-5">
+      <div class="card-header">
+        <h2>Tareas Pendientes</h2>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-secondary mb-0">
+          <thead>
+            <tr>
+              <th scope="col">Título</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">Fecha de Vencimiento</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Etiqueta</th>
+              <th scope="col">Urgencia</th>
+              <th scope="col">Asignado a</th>
+              <th scope="col">Creado por</th>
+              <th scope="col">Cambio Estado</th>
+              <th scope="col">Cambio Prioridad</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tarea in tareas_pendientes %}
+              <tr>
+                <td scope="row">{{ tarea.titulo }}</td>
+                <td>{{ tarea.descripcion }}</td>
+                <td>{{ tarea.fecha_vencimiento }}</td>
+                <td>{{ tarea.get_estado_display }}</td>
+                <td>{{ tarea.get_etiqueta_display }}</td>
+                <td class="{{ tarea.get_urgencia_display|get_urgencia_color }}">{{ tarea.get_urgencia_display }}</td>
+                <td>{{ tarea.responsable }}</td>
+                <td>{{ tarea.creado_por }}</td>
+                <td>
+                  <form method="post" action="{% url 'completar_tarea' tarea.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Completar Tarea</button>
+                  </form>
+                </td>
+                <td>
+                  <form method="post" action="{% url 'cambiar_prioridad' tarea.id %}">
+                    {% csrf_token %}
+                    <select name="urgencia" onchange="this.form.submit()">
+                      {% for choice in tarea.URGENCIA_CHOICES %}
+                        <option value="{{ choice.0 }}"
+                                {% if choice.0 == tarea.urgencia %}selected{% endif %}>{{ choice.1 }}</option>
+                      {% endfor %}
+                    </select>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

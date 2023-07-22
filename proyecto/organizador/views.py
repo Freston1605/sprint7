@@ -10,19 +10,33 @@ from .forms import RegistrationForm, CustomLoginForm, TareaForm
 from .models import Tarea
 
 from django.contrib import admin
+
 # Create your views here.
 
 
-#clase para visualizacion en panel Admin de Django
+# clase para visualizacion en panel Admin de Django
 class TareaAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'descripcion', 'fecha_vencimiento', 'estado', 'etiqueta', 'urgencia', 'responsable', 'creado_por')
-    list_filter = ('estado', 'etiqueta', 'urgencia', 'responsable', 'creado_por')
-    search_fields = ('titulo', 'descripcion', 'responsable__username', 'creado_por__username')
-    ordering = ('-fecha_vencimiento',)
+    list_display = (
+        "titulo",
+        "descripcion",
+        "fecha_vencimiento",
+        "estado",
+        "etiqueta",
+        "urgencia",
+        "responsable",
+        "creado_por",
+    )
+    list_filter = ("estado", "etiqueta", "urgencia", "responsable", "creado_por")
+    search_fields = (
+        "titulo",
+        "descripcion",
+        "responsable__username",
+        "creado_por__username",
+    )
+    ordering = ("-fecha_vencimiento",)
 
 
-
-#muestra de landing
+# muestra de landing
 def landing_page(request):
     return render(request, "landing_page.html")
 
@@ -136,29 +150,34 @@ class CrearTareaView(CreateView):
             self.request, "¡Tarea creada exitosamente!"
         )  # Agregar mensaje de éxito
         return reverse(
-            "lista_tareas"
+            "tareas_pendientes"
         )  # Utilizar la función reverse en lugar de reverse_lazy
 
-#modificacion de lsta de tareas para que muestre las completas y las pendientes separado
 
-def lista_tareas(request):
-    tareas_completadas = Tarea.objects.filter(estado='completada')
-    tareas_pendientes = Tarea.objects.exclude(estado='completada')
-    return render(request, 'tareas/visualizacion.html', {'tareas_completadas': tareas_completadas, 'tareas_pendientes': tareas_pendientes})
+# modificacion de lsta de tareas para que muestre las completas y las pendientes separado
 
-#funcion para completar las tareas
+def tareas_pendientes(request):
+    tareas_pendientes = Tarea.objects.exclude(estado="completada")
+    return render(request,"tareas/pendientes.html", {"tareas_pendientes": tareas_pendientes})
+
+def tareas_completadas(request):
+    tareas_completadas = Tarea.objects.filter(estado="completada")
+    return render(request, 'tareas/completadas.html', {"tareas_completadas": tareas_completadas})
+
+# funcion para completar las tareas
 def completar_tarea(request, tarea_id):
     tarea = get_object_or_404(Tarea, id=tarea_id)
 
-    if request.method == 'POST':
-        tarea.estado = 'completada'
+    if request.method == "POST":
+        tarea.estado = "completada"
         tarea.save()
-        messages.success(request, 'La tarea ha sido completada exitosamente.')
-        return redirect('lista_tareas')  
+        messages.success(request, "La tarea ha sido completada exitosamente.")
+        return redirect("tareas_pendientes")
     # Redireccion a pagina lista
-    return render(request, 'tareas/visualizacion.html', {'tarea': tarea}) 
+    return render(request, "tareas/pendientes.html", {"tarea": tarea})
 
-#funcion para cambio de prioridad
+
+# funcion para cambio de prioridad
 def cambiar_prioridad(request, tarea_id):
     tarea = get_object_or_404(Tarea, id=tarea_id)
 
@@ -168,6 +187,40 @@ def cambiar_prioridad(request, tarea_id):
         tarea.save()
 
         # Redireccion a pagina lista
-        return redirect("lista_tareas")
-    
-    return render(request, 'tareas/visualizacion.html', {'tarea': tarea}) 
+        return redirect("tareas_pendientes")
+
+    return render(request, "tareas/pendientes.html", {"tarea": tarea})
+
+def ver_detalles(request, tarea_id):
+    tarea = get_object_or_404(Tarea, id=tarea_id)
+
+    detalles_html = f"""
+                <div class="table-responsive">
+                    <table class="table table-primary mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">Título</th>
+                                <th scope="col">Descripción</th>
+                                <th scope="col">Fecha de Vencimiento</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Urgencia</th>
+                                <th scope="col">Asignado a</th>
+                                <th scope="col">Creado por</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td scope="row">{tarea.titulo}</td>
+                                <td>{tarea.descripcion}</td>
+                                <td>{tarea.fecha_vencimiento}</td>
+                                <td>{tarea.estado}</td>
+                                <td>{tarea.urgencia}</td>
+                                <td>{tarea.responsable}</td>
+                                <td>{tarea.creado_por}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+           
+    """
+    return HttpResponse(detalles_html)

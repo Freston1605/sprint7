@@ -8,8 +8,10 @@ urlpatterns = [
     path('accounts/login', views.CustomLoginView.as_view(), name='login'),
     path('accounts/logout', views.logout_view, name='logout'),
     path('welcome/', views.welcome, name='welcome'),
-    path('crear_tarea/', views.CrearTareaView.as_view(), name="crear_tarea"),
-    path('lista_tareas/', views.lista_tareas, name='lista_tareas'),
+    path('tarea/crear/', views.CrearTareaView.as_view(), name="crear_tarea"),
+    path('tarea/completadas/', views.tareas_completadas, name='tareas_completadas'),
+    path('detalles_tarea/<int:tarea_id>/', views.ver_detalles, name='detalles_tarea'),
     path('tarea/<int:tarea_id>/completar/', views.completar_tarea, name='completar_tarea'),
     path('tarea/<int:tarea_id>/cambiar_prioridad/', views.cambiar_prioridad, name='cambiar_prioridad'),
+    path('tareas/pendientes/', views.tareas_pendientes, name='tareas_pendientes')
 ]
